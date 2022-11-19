@@ -6,8 +6,8 @@ BOT_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
 CONFIG_PATH="config"
 
 sync() {
-    action="push"
-    message=""generate app config""
+    action="$1"
+    message="$2"
 
     # call windows git from wsl
     git=git
