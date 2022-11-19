@@ -1,6 +1,6 @@
 #!/bin/sh
 
-UPSTREAM="https://github.com/fuserh/torproject.git"
+UPSTREAM="https://github.com/vcheckzen/KeepAliveE5.git"
 BOT_USER="github-actions[bot]"
 BOT_EMAIL="41898282+github-actions[bot]@users.noreply.github.com"
 CONFIG_PATH="config"
@@ -28,6 +28,35 @@ exit_on_error() {
     echo "$output" | grep -iE '错误|失败|error|except' >/dev/null && exit 1
 
     return 0
+}
+
+register() {
+    (
+        cd register || exit 1
+        exit_on_error "90" "5m" "bash register_apps_by_force.sh"
+    )
+    ret=$?
+
+    [ "$(ls -A "$CONFIG_PATH" 2>/dev/null)" ] &&
+        poetry run python crypto.py e || exit 1
+
+    exit $ret
+}
+
+invoke() {
+    [ -d "$CONFIG_PATH" ] || {
+        echo "没有找到配置文件, 请执行应用注册 Action."
+        exit 1
+    }
+
+    # sleep $((RANDOM % 127))
+    poetry run python crypto.py d || exit 1
+    (
+        exit_on_error "25" "5m" "poetry run python task.py"
+    )
+    ret=$?
+    poetry run python crypto.py e || exit 1
+    exit $ret
 }
 
 sync() {
